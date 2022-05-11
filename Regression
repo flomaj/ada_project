@@ -1,51 +1,50 @@
+# In this part of the code we will use liner regression to observe the possible correlation between our variables 
+
+#firstly we import some libraries we need 
+
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn import linear_model, metrics
 
-### download the original data set -- it has a bunch of NaN's)
-#cars = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data',header=None, sep='\s+')
 
-### Clean data set
-data = pd.read_csv('Returns.csv')
+# Then we read Data
+
+data = pd.read_csv('final_data.csv')
 
 
-#### Some scatter plots
-cols = ['MVRV', 'txs_count', 'daily_active_adds', 'gwei']
+# Define the scatter plots and the variables we want to regress, we didnt take into accoint google trends and volatility as the outcome was not optimal 
+
+cols = ['closing_price','MVRV', 'txs_count', 'daily_active_adds', 'gwei']
 sns.pairplot(data[cols], size=2.5)
 plt.show()
 
 
-### extract the fuel consumption
-y = data.iloc[:,0].values
+# extract closing price
+y = data.iloc[:,8].values
 
-### horsepower
+# extract daily adds
 X = data.iloc[:,[3]].values
 print(X.size)
 
-### Plot 
+# Make the plot 
 g = sns.regplot(x=X, y=y, fit_reg=False)
 
-#### Correlation
-#cm = np.corrcoef(cars[cols].values.T)
-#sns.set(font_scale=1.5)
-#hm = sns.heatmap(cm,cbar=True,annot=True,square=True,fmt='.2f',annot_kws={'size': 15},yticklabels=cols,xticklabels=cols)
-#print("correlation", cm)
 
-
-### Linear Regression
+# Implement the Linear Regression model 
 reg = linear_model.LinearRegression()
 reg.fit(X,y)
 plt.plot(X, reg.predict(X), color='red')
 
-### Labels
-plt.xlabel('Power [hp]')
-plt.ylabel('Consumption [mpg]')
+# We name our labels 
+plt.xlabel('Daily Adds')
+plt.ylabel('Closing Price')
 plt.show()
 
-# Coefficients and R2
+# Finally, we print the coefficients and R squared 
 print('Parameters:')
 print('w0: %f'%reg.intercept_)
 print('w1: %f'%reg.coef_[0])
 print('R2: %f'%metrics.r2_score(y,reg.predict(X)))
+
