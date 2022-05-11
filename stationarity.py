@@ -10,7 +10,7 @@ from statsmodels.tsa.stattools import adfuller
 
 #import data
 
-data_return = pd.read_csv('return.csv', index_col = 'date', parse_dates=True)
+data_return = pd.read_csv('final_data.csv', index_col = 'date', parse_dates=True)
 
 #We check at stationarity with three different ways :
 
