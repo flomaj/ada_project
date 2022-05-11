@@ -140,13 +140,12 @@ for i in range(n):
     
     #keep the predictions for eatc time we run the model in a single dataframe.
     predictions = pd.concat([predictions,test_predic], axis=1)
-    
+
+#Plot the R squared.
 plt.hist(r2_predictions)
 plt.savefig('r2_distribution.png')
 
-r2 = pd.DataFrame(r2_predictions)
-r2.describe()
-
+#Plot the predictions and the "true" result.
 plt.plot(predictions)
 plt.plot(y[cut_point:,:], lw = 5)
 plt.savefig('predictions.png')
