@@ -147,5 +147,5 @@ plt.savefig('r2_distribution.png')
 
 #Plot the predictions and the "true" result.
 plt.plot(predictions)
-plt.plot(y[cut_point:,:], lw = 5)
+plt.plot(output[cut_point:,:], lw = 5)
 plt.savefig('predictions.png')
