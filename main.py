@@ -142,11 +142,9 @@ for i in range(n):
     predictions = pd.concat([predictions,test_predic], axis=1)
     
 plt.hist(r2_predictions)
-plt.show()
 
 r2 = pd.DataFrame(r2_predictions)
 r2.describe()
 
 plt.plot(predictions)
 plt.plot(y[cut_point:,:], lw = 5)
-plt.show()
