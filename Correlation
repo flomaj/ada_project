@@ -1,0 +1,16 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from statsmodels.graphics.tsaplots import plot_acf
+import numpy as np
+
+
+df = pd.read_csv('Returns.csv')
+fig, ax = plt.subplots(figsize=(16,8))
+
+
+plot_acf(df['closing_price'], lags=51, ax=ax)
+plt.ylim([0,1])
+plt.yticks(np.arange(0.1, 1.5, 0.1))
+plt.xticks(np.arange(1, 51, 1))
+plt.axhline(y=0.93, color="green")
+plt.show()
