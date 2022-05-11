@@ -11,25 +11,24 @@ from sklearn.preprocessing import StandardScaler
 
 #import the data into a dataframe
 
-df = pd.read_csv('final_data.csv', index_col = 'date', parse_dates=True)
+data = pd.read_csv('final_data.csv', index_col = 'date', parse_dates=True)
 
-#define our inputs and output
+#Define our inputs and output
 
-inputs = df.iloc[:, 0:7] #Inputs
-output = df.iloc[:, 7:8].values #Output => closing price
+inputs = data.iloc[:, 0:7] #Inputs, in our case : MVRV, transactions count, daily active addresses, mean hash rate, gas price, 30D volatility & Google Trends Score.
+output = data.iloc[:, 7:8].values #Output, in our case : Closing price.
 
-#Preprocess the inputs. Output can stay under their original "form".
+#Preprocessing the inputs. Output can stay under its original "form".
+#We use a Standard Scaler transformation for our inputs.
 
-
-ss = StandardScaler()
+ss = StandardScaler() 
 inputs_ss = ss.fit_transform(inputs)
 
-#define our data
+#Split the data. In our case, we want to predict the return of the next ten days. Thus, we set our cut point at n-10. 
+#Our train dataset is made of all the data expected the last ten. Our test dataset contains the inputs for our prediction.
 
 starting_data_number = 0
 cut_point = 1867
-
-#split the data into two parts (training data & test data)
 
 inputs_train = inputs_ss[starting_data_number:cut_point, :]
 inputs_test = inputs_ss[cut_point:, :]
@@ -37,18 +36,18 @@ inputs_test = inputs_ss[cut_point:, :]
 output_train = output[starting_data_number:cut_point, :]
 output_test = output[cut_point:, :]  
 
-#convert the Numpy Arrays to Tensors and to Variables
+#Because we are using PyTorch, we have to convert our dataset to tensors, and then to variables. 
 
-inputs_train_tensors = Variable(torch.Tensor(inputs_train)) #size : [1870, 8]
-inputs_test_tensors = Variable(torch.Tensor(inputs_test)) #size : [19, 8]
+inputs_train_tensors = Variable(torch.Tensor(inputs_train)) #size : [1867, 8]
+inputs_test_tensors = Variable(torch.Tensor(inputs_test)) #size : [10, 8]
 
 output_train_tensors = Variable(torch.Tensor(output_train))
 output_test_tensors = Variable(torch.Tensor(output_test))
 
-#reshaping to rows, timestamps, features
+#These data have 2 dimensions. To perform the LSTM, we have to reshape them in 3D to include the timestamps. 
 
-inputs_train_tensors_final = torch.reshape(inputs_train_tensors,   (inputs_train_tensors.shape[0], 1, inputs_train_tensors.shape[1])) #size : [1870, 1, 8]
-inputs_test_tensors_final = torch.reshape(inputs_test_tensors,  (inputs_test_tensors.shape[0], 1, inputs_test_tensors.shape[1])) #size : [19, 1, 8]
+inputs_train_tensors_final = torch.reshape(inputs_train_tensors,   (inputs_train_tensors.shape[0], 1, inputs_train_tensors.shape[1])) #size : [1867, 1, 8]
+inputs_test_tensors_final = torch.reshape(inputs_test_tensors,  (inputs_test_tensors.shape[0], 1, inputs_test_tensors.shape[1])) #size : [10, 1, 8]
 
 #define the LSTM
 
@@ -121,7 +120,7 @@ for i in range(n):
         
     #bring the original dataset into the model suitable format
 
-    df_X_ss = ss.transform(df.iloc[:, 0:7]) #old transformers
+    df_X_ss = ss.transform(data.iloc[:, 0:7]) #old transformers
     df_X_ss = Variable(torch.Tensor(df_X_ss)) #converting to Tensors
 
     y = Variable(torch.Tensor(output))
