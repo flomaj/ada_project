@@ -58,23 +58,24 @@ class LSTM1(nn.Module):
         self.hidden_size = hidden_size #hidden state
         self.seq_length = seq_length #sequence length
 
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True) #lstm
-        self.lstm_bis = nn.LSTM(hidden_size, hidden_size, num_layers)
-        self.fc = nn.Linear(hidden_size, num_classes) #fully connected last layer
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True) #First LSTM (8 -> hidden size)
+        self.lstm_bis = nn.LSTM(hidden_size, hidden_size, num_layers) #Second LSTM (hidden size -> hidden size)
+        self.fc = nn.Linear(hidden_size, num_classes) #Last fully connect layer (hidden size -> 1)
         self.sigmoid = nn.Sigmoid() #sigmoid activation function
-        self.silu = nn.SiLU() #swish activation function
     
     def forward(self,x):
-        h_0 = Variable(torch.zeros(self.num_layers, x.size(0), self.hidden_size)) #hidden state
-        c_0 = Variable(torch.zeros(self.num_layers, x.size(0), self.hidden_size)) #internal state
-        h_1 = Variable(torch.zeros(self.num_layers, x.size(0), self.hidden_size)) #hidden state
-        c_1 = Variable(torch.zeros(self.num_layers, x.size(0), self.hidden_size)) #internal state
-        # Propagate input through LSTM
-        output, (hn, cn) = self.lstm(x, (h_0, c_0)) #1st lstm
-        output_bis, (hn1, cn1) = self.lstm_bis(hn, (h_1, c_1)) #2nd lstm
-        hn1 = hn1.view(-1, self.hidden_size) #reshaping the data for Dense layer next
-        out = self.sigmoid(hn1) #sigmoid activation function
-        out = self.fc(out) #Final Output
+        h_0 = Variable(torch.zeros(self.num_layers, x.size(0), self.hidden_size)) #First hidden state related to first LSTM.
+        c_0 = Variable(torch.zeros(self.num_layers, x.size(0), self.hidden_size)) #First internal state related to first LSTM.
+        h_1 = Variable(torch.zeros(self.num_layers, x.size(0), self.hidden_size)) #Second hidden state related to second LSTM.
+        c_1 = Variable(torch.zeros(self.num_layers, x.size(0), self.hidden_size)) #Second internal state related to second LSTM.
+        
+        #Propagate input through LSTM
+        
+        output, (hn, cn) = self.lstm(x, (h_0, c_0)) #First LSTM.
+        output_bis, (hn1, cn1) = self.lstm_bis(hn, (h_1, c_1)) #Second LSTM.
+        hn1 = hn1.view(-1, self.hidden_size) #Reshape data for the last layer.
+        out = self.sigmoid(hn1) #Go through the activation function.
+        out = self.fc(out) #Last layer, give the outputs.
         return out
     
 #define the parameters of the LSTM
