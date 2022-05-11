@@ -82,16 +82,16 @@ class LSTM1(nn.Module):
     
 #define the parameters of the LSTM
 
-num_epochs = 1000 #10000 epochs
-learning_rate = 0.01 #0.01 lr
+num_epochs = 1000 # Define the number of epochs of the model
+learning_rate = 0.01 #Define the learning rate of the optimizer
 
-input_size = 7 #number of inputs of the model.
-hidden_size = 4 #number of features in hidden state
-num_layers = 1 #number of stacked lstm layers
+input_size = 7 #Define the number of inputs
+hidden_size = 4 #Define the hidden size
+num_layers = 1 #Define the number of layers of the LSTM
 
-num_classes = 1 #size of the output
+num_classes = 1 #Define the targeted size of the input
 
-n = int(input("How many times do you want to run the model?"))
+n = int(input("How many times do you want to run the model?")) #Define the number of times you want to run the model. 
 r2_total = []
 r2_predictions = []
 predictions = pd.DataFrame()
