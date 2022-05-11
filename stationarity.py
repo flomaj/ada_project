@@ -1,4 +1,4 @@
-#The observations in a stationary time series are not dependent on time.
+#Stationarity Test.
 
 #import some libraries
 
@@ -12,20 +12,18 @@ from statsmodels.tsa.stattools import adfuller
 
 data_return = pd.read_csv('final_data.csv', index_col = 'date', parse_dates=True)
 
-#We check at stationarity with three different ways :
+#We check at stationarity with three different ways : visually, check mean/variance & Dicky-Fuller test.
 
 #1st : Look at the plot.
 
-plt.style.use('ggplot')
-data_return['closing_price'].plot(label='CLOSE', title='Daily Return')
-
 #We can notice the COVID crash in March 2020.It does not seem to have a trend or seasonal effects, which is a good news for stationarity. For the other variables :
 
-for i in range(len(data_return.columns) - 1):
+for i in range(len(data_return.columns)):
     x = data_return.iloc[:,i]
     x.plot(title=data_return.columns[i])
     plt.show()
     
+#We can notice the COVID crash in March 2020.It does not seem to have a trend or seasonal effects, which is a good news for stationarity.
 #2nd : Statistical approach = dividing dataset in 4 and check mean/variance
 
 for i in range(len(data_return.columns) - 1):
