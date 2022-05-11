@@ -1,16 +1,25 @@
+#the goal is to see in what extend there is correalton between sto closing prices 
+#import some basic libraries
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf
 import numpy as np
 
+#read our data
 
-df = pd.read_csv('Returns.csv')
+
+df = pd.read_csv('final_data.csv')
+
+#define our plot and its size
+
+
 fig, ax = plt.subplots(figsize=(16,8))
 
+# we chose the number of lags to be 51 as a more representative number and we arranged the limits y axis to illstrate better our results
 
 plot_acf(df['closing_price'], lags=51, ax=ax)
-plt.ylim([0,1])
-plt.yticks(np.arange(0.1, 1.5, 0.1))
+plt.ylim([-0.04,0.01])
+plt.yticks(np.arange(-0.04, 0.08, 0.01))
 plt.xticks(np.arange(1, 51, 1))
-plt.axhline(y=0.93, color="green")
 plt.show()
