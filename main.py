@@ -143,9 +143,13 @@ for i in range(n):
 
 #Plot the R squared.
 plt.hist(r2_predictions)
+plt.ylabel("Number of occurences")
+plt.xlabel("R-squared value")
 plt.savefig('r2_distribution.png')
 
 #Plot the predictions and the "true" result.
 plt.plot(predictions)
 plt.plot(output[cut_point:,:], lw = 5)
+plt.ylabel("Daily return")
+plt.xlabel("Days")
 plt.savefig('predictions.png')
