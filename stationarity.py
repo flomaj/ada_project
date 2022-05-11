@@ -1,4 +1,4 @@
-#Stationarity Test.
+#Stationarity Test of our data.
 
 #import some libraries
 
@@ -8,7 +8,7 @@ import seaborn as sn
 import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller
 
-#import data
+#import data from a csv file and convert to dataframe.
 
 data_return = pd.read_csv('final_data.csv', index_col = 'date', parse_dates=True)
 
@@ -16,22 +16,23 @@ data_return = pd.read_csv('final_data.csv', index_col = 'date', parse_dates=True
 
 #1st : Look at the plot.
 
-#We can notice the COVID crash in March 2020.It does not seem to have a trend or seasonal effects, which is a good news for stationarity. For the other variables :
+
 
 for i in range(len(data_return.columns)):
     x = data_return.iloc[:,i]
     x.plot(title=data_return.columns[i])
     plt.show()
     
-#We can notice the COVID crash in March 2020.It does not seem to have a trend or seasonal effects, which is a good news for stationarity.
-#2nd : Statistical approach = dividing dataset in 4 and check mean/variance
+#Regarding, the daily returns, we can notice the COVID crash in March 2020.It does not seem to have a trend or seasonal effects, which is a good news for stationarity.
+
+#2nd : Statistical approach = dividing dataset in 4 and check mean/variance. Ideally, each "sub-dataset" has the same mean and the same variance.
 
 for i in range(len(data_return.columns) - 1):
-    X = data_return.values[i]
+    data = data_return.values[i]
     split = round(len(X) / 4)
-    X1, X2, X3, X4 = X[0:split], X[split:(2*split)], X[(2*split):(3*split)], X[split:]
-    mean1, mean2, mean3, mean4 = X1.mean(), X2.mean(), X3.mean(), X4.mean()
-    var1, var2, var3, var4 = X1.var(), X2.var(), X3.var(), X4.var()
+    data_1, data_2, data_3, data_4 = data[0:split], data[split:(2*split)], data[(2*split):(3*split)], data[split:]
+    mean1, mean2, mean3, mean4 = data_1.mean(), data_2.mean(), data_3.mean(), data_4.mean()
+    var1, var2, var3, var4 = data_1.var(), data_2.var(), data_3.var(), data_4.var()
     print("Mean & Variance of", data_return.columns[i])
     print('mean1 = %f, mean2 = %f, mean3 = %f, mean4 = %f' % (mean1, mean2, mean3, mean4))
     print('variance1 = %f, variance2 = %f, variance3 = %f, variance4 = %f' % (var1, var2, var3, var4))
@@ -42,8 +43,8 @@ for i in range(len(data_return.columns) - 1):
 #p-value <= 0.05: stationary.
 
 for i in range(len(data_return.columns)):
-    X = data_return.values[i]
-    result = adfuller(X)
+    variables = data_return.values[i]
+    result = adfuller(variables)
     print("Results of the test for :", data_return.columns[i])
     print('ADF Statistic: %f' % result[0])
     print('p-value: %f' % result[1])
