@@ -120,24 +120,24 @@ for i in range(n):
         
     #bring the original dataset into the model suitable format
 
-    df_X_ss = ss.transform(data.iloc[:, 0:7]) #old transformers
-    df_X_ss = Variable(torch.Tensor(df_X_ss)) #converting to Tensors
+    inputs_trans_ss = ss.transform(inputs) #We transform the whole inputs dataset with Standard Scaler.
+    inputs_trans_ss_tensor = Variable(torch.Tensor(inputs_trans_ss)) #We convert the transformed inputs to tensors and then variable.
 
-    y = Variable(torch.Tensor(output))
-    #reshaping the dataset
-    df_X_ss = torch.reshape(df_X_ss, (df_X_ss.shape[0], 1, df_X_ss.shape[1]))
+    output_ready_tensor = Variable(torch.Tensor(output)) #We convert the wole output dataset to tensors and then variable.
     
-    #make the predictions
-
-    train_predict = lstm1(df_X_ss) #forward pass
-    data_predict = train_predict.data.numpy() #numpy conversion
-    test_predic = pd.DataFrame(data_predict[cut_point:,:])
+    #We reshape the inputs dataset to make it suitable for the LSTM.
+    total_inputs_reshap = torch.reshape(inputs_trans_ss_tensor, (inputs_trans_ss_tensor.shape[0], 1, inputs_trans_ss_tensor.shape[1]))
     
-    #compute R squared
-    r2_total.append(sklearn.metrics.r2_score(y,data_predict))
-    r2_predictions.append(sklearn.metrics.r2_score(y[cut_point:,:],data_predict[cut_point:,:]))
+    #We perform our prediction on the whole dataset regarding to our model.
+    train_predict = lstm1(total_inputs_reshap) #The forward pass goes on and we get our predictions.
+    data_predict = train_predict.data.numpy() #We transform  our predictions (tensors to numpy arrays)
+    test_predic = pd.DataFrame(data_predict[cut_point:,:]) #We create a second dataframe with only the predictions for the next 10 days.
     
-    #compute predicted data
+    #compute R squared for eachtime we run.
+    r2_total.append(sklearn.metrics.r2_score(output,data_predict))
+    r2_predictions.append(sklearn.metrics.r2_score(output[cut_point:,:],data_predict[cut_point:,:]))
+    
+    #keep the predictions for eatc time we run the model in a single dataframe.
     predictions = pd.concat([predictions,test_predic], axis=1)
     
 plt.hist(r2_predictions)
