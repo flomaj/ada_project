@@ -15,14 +15,14 @@ df = pd.read_csv('final_data.csv', index_col = 'date', parse_dates=True)
 
 #define our inputs and output
 
-X = df.iloc[:, 0:7] #Inputs
-y = df.iloc[:, 7:8] #Output => daily return
+inputs = df.iloc[:, 0:7] #Inputs
+output = df.iloc[:, 7:8].values #Output => closing price
 
 #Preprocess the inputs. Output can stay under their original "form".
 
 
 ss = StandardScaler()
-X = ss.fit_transform(X)
+inputs_ss = ss.fit_transform(inputs)
 
 #define our data
 
@@ -142,9 +142,11 @@ for i in range(n):
     predictions = pd.concat([predictions,test_predic], axis=1)
     
 plt.hist(r2_predictions)
+plt.savefig('r2_distribution.png')
 
 r2 = pd.DataFrame(r2_predictions)
 r2.describe()
 
 plt.plot(predictions)
 plt.plot(y[cut_point:,:], lw = 5)
+plt.savefig('predictions.png')
