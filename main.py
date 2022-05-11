@@ -33,8 +33,7 @@ cut_point = 1867
 inputs_train = inputs_ss[starting_data_number:cut_point, :]
 inputs_test = inputs_ss[cut_point:, :]
 
-output_train = output[starting_data_number:cut_point, :]
-output_test = output[cut_point:, :]  
+output_train = output[starting_data_number:cut_point, :] 
 
 #Because we are using PyTorch, we have to convert our dataset to tensors, and then to variables. 
 
@@ -42,7 +41,6 @@ inputs_train_tensors = Variable(torch.Tensor(inputs_train)) #size : [1867, 8]
 inputs_test_tensors = Variable(torch.Tensor(inputs_test)) #size : [10, 8]
 
 output_train_tensors = Variable(torch.Tensor(output_train))
-output_test_tensors = Variable(torch.Tensor(output_test))
 
 #These data have 2 dimensions. To perform the LSTM, we have to reshape them in 3D to include the timestamps. 
 
@@ -90,33 +88,35 @@ num_layers = 1 #Define the number of layers of the LSTM
 
 num_classes = 1 #Define the targeted size of the input
 
+#Now, we will run our model.
+
 n = int(input("How many times do you want to run the model?")) #Define the number of times you want to run the model. 
 r2_total = []
 r2_predictions = []
 predictions = pd.DataFrame()
 
 for i in range(n):
-    #instantiate the class
+    
+    #Instantiate the LSTM model with our parameters and our inputs.
 
     lstm1 = LSTM1(num_classes, input_size, hidden_size, num_layers, inputs_train_tensors_final.shape[1])
     
-    #loss function & optimizer
+    #Determine the loss function & the optimizer
 
-    criterion = torch.nn.MSELoss() # We use the mean-squared error as loss function
+    criterion = torch.nn.MSELoss() #We use the mean-squared error as loss function
 
-    optimizer = torch.optim.Adam(lstm1.parameters(), lr=learning_rate) #Between RMSProp, AdaDelta and Adam, Adam was found to slightly outperform, so we've chosen Adam.
+    optimizer = torch.optim.Adam(lstm1.parameters(), lr=learning_rate) #For this project, we use the "Adam" optimizer.
     
-    #train the model
+    #Train the model the find the optimal weights.
 
     for epoch in range(num_epochs):
-        outputs_train = lstm1.forward(inputs_train_tensors_final) #forward pass 
-        loss_train = criterion(outputs_train, output_train_tensors) # calculate the loss (in our case based on MSE)
-        #outputs_test = lstm1.forward(inputs_test_tensors_final) #forward pass 
-        #loss_test = criterion(outputs_test, output_test_tensors) # calculate the loss (in our case based on MSE)
+        
+        outputs_forward = lstm1.forward(inputs_train_tensors_final) #The forward pass goes on.
+        loss_train = criterion(outputs_forward, output_train_tensors) #It computes the loss for each epoch.
 
-        optimizer.zero_grad() #caluclate the gradient, manually setting to 0
-        loss_train.backward() # backwards pass
-        optimizer.step() # update model parameters
+        optimizer.zero_grad() #It computes the gradient that we previously set to 0.
+        loss_train.backward() #The backward pass goes on.
+        optimizer.step() #The weights are updated with regards to our optimizer function.
         
     #bring the original dataset into the model suitable format
 
