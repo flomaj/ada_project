@@ -10,7 +10,7 @@ from statsmodels.tsa.stattools import adfuller
 
 #import data from a csv file and convert to dataframe.
 
-data_return = pd.read_csv('final_data.csv', index_col = 'date', parse_dates=True)
+data_return = pd.read_csv('dataset.csv', index_col = 'date', parse_dates=True)
 
 #We check at stationarity with three different ways : visually, check mean/variance & Dicky-Fuller test.
 
