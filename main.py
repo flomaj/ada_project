@@ -49,7 +49,7 @@ inputs_test_tensors_final = torch.reshape(inputs_test_tensors,  (inputs_test_ten
 
 #define the LSTM
 
-class LSTM1(nn.Module):
+class model_LSTM(nn.Module):
     def __init__(self, num_classes, input_size, hidden_size, num_layers, seq_length):
         super(LSTM1, self).__init__()
         self.num_classes = num_classes #number of classes
@@ -100,7 +100,7 @@ for i in range(n):
     
     #Instantiate the LSTM model with our parameters and our inputs.
 
-    lstm1 = LSTM1(num_classes, input_size, hidden_size, num_layers, inputs_train_tensors_final.shape[1])
+    lstm1 = model_LSTM(num_classes, input_size, hidden_size, num_layers, inputs_train_tensors_final.shape[1])
     
     #Determine the loss function & the optimizer
 
