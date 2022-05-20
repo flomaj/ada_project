@@ -51,7 +51,7 @@ inputs_test_tensors_final = torch.reshape(inputs_test_tensors,  (inputs_test_ten
 
 class model_LSTM(nn.Module):
     def __init__(self, num_classes, input_size, hidden_size, num_layers, seq_length):
-        super(LSTM1, self).__init__()
+        super(model_LSTM, self).__init__()
         self.num_classes = num_classes #number of classes
         self.num_layers = num_layers #number of layers
         self.input_size = input_size #input size
